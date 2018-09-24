@@ -3,8 +3,9 @@ import { Route, NavLink, Switch, Redirect } from 'react-router-dom';
 // import { Route, Link, NavLink, Switch } from 'react-router-dom';
 import './Blog.css';
 import Posts from './Posts/Posts';
-import NewPost from './NewPost/NewPost';
+//import NewPost from './NewPost/NewPost';
 // import FullPost from './FullPost/FullPost';
+import asyncComponent from '../../hoc/asyncComponent';
 
 //* Route *//
 /* Needs at least two props, path and (render or component) which is a reference to a function/class */
@@ -37,8 +38,11 @@ import NewPost from './NewPost/NewPost';
 //* Gaurd *//
 /* Prevent non auth'd users from accessing content they shouldn't see */
 
-
-
+//* Lazy Loading or Code Splitting *//
+/* When using the create react webpack setup this will create a chunk which will dynamically be included or excluded */
+const AsyncNewPost = asyncComponent(() => {
+	return import('./NewPost/NewPost'); // this is dynamic import syntax
+});
 
 class Blog extends Component {
 	state = {
@@ -72,7 +76,7 @@ class Blog extends Component {
 				{/* <Route path="/" exact render={ () => <h1>Howdy!<h1/> } /> */}
 				{/* <Route path="/" exact component={ Posts } /> */}
 				<Switch>
-					{ this.state.auth ? <Route path="/new-post" component={ NewPost } /> : null }
+					{ this.state.auth ? <Route path="/new-post" component={ AsyncNewPost } /> : null }
 					<Route path="/posts" component={ Posts } />
 					{/* <Route path="/" exact component={ Posts } />  This is a way to have multiple routes load the same component */}
 					{/* <Route path="/:id" exact component={ FullPost } /> */}
