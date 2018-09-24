@@ -7,12 +7,26 @@ class FullPost extends Component {
 		loadedPost : null
 	}
 
+	//* Routing *//
+	/* Now that routing is setup, this.props.id must be replaced to use the route params this.props.match.params.id */
+	/* componentDidMount() will not be executed on a route change if the component was already mounted */
+	/* Instead used componentDidUpdate() */
+
 	/* Without these conditional checks setting the state inside this method will */
 	/* create an infinite loop and continues to send requests */
+	componentDidMount () {
+		this.loadData();
+	}
+
 	componentDidUpdate () {
-		if (this.props.id) {
-			if(!this.state.loadedPost || (this.state.loadedPost && this.state.loadedPost.id !== this.props.id)) {
-				axios.get(`/posts/${this.props.id}`)
+		this.loadData();
+	}
+
+	loadData () {
+		if (this.props.match.params.id) {
+			// The + operator indicates it's a number instead of a string like it actually is
+			if(!this.state.loadedPost || (this.state.loadedPost && this.state.loadedPost.id !== +this.props.match.params.id)) {
+				axios.get(`/posts/${this.props.match.params.id}`)
 					.then(response => {
 						//console.log(response);
 						this.setState({loadedPost:response.data})
@@ -24,7 +38,7 @@ class FullPost extends Component {
 	}
 
 	deletePostHandler = () => {
-		axios.delete(`/posts/${this.props.id}`)
+		axios.delete(`/posts/${this.props.match.params.id}`)
 			.then(response => {
 				console.log(response);
 			}).catch(error => {
@@ -35,7 +49,7 @@ class FullPost extends Component {
     render () {
 
 		let post = <p style={{textAlign: 'center'}}>Please select a Post!</p>;
-		if(this.props.id) {
+		if(this.props.match.params.id) {
 			post= <p style={{textAlign: 'center'}}>Loading...!</p>
 		}
 		if (this.state.loadedPost) {
