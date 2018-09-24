@@ -8,6 +8,10 @@ class NewPost extends Component {
         content: '',
         author: 'Max'
 	}
+
+	componentDidMount () {
+		console.log('[NewPost -> props]', this.props);
+	}
 	
 	postDataHandler = () => {
 		const postData = {
